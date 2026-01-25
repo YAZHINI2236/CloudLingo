@@ -7,31 +7,18 @@ socket.onopen = () => {
 };
 
 socket.onmessage = function(event) {
-    let chat = document.getElementById("chat");
+    let data = JSON.parse(event.data);
+
     let messages = document.getElementById("messages");
+    let chat = document.getElementById("chat");
 
-    console.log("Raw message:", event.data);
+    let msgDiv = document.createElement("div");
 
-    let data;
-    try {
-        data = JSON.parse(event.data);
-    } catch (e) {
-        console.error("Invalid JSON:", event.data);
-        return;
-    }
+    // ALWAYS show translated messages from server on LEFT
+    msgDiv.className = "message other";
+    msgDiv.textContent = data.translated;
 
-    // LEFT: original
-    let originalDiv = document.createElement("div");
-    originalDiv.className = "message other";
-    originalDiv.textContent = data.original;
-    messages.appendChild(originalDiv);
-
-    // RIGHT: translated
-    let translatedDiv = document.createElement("div");
-    translatedDiv.className = "message me";
-    translatedDiv.textContent = data.translated;
-    messages.appendChild(translatedDiv);
-
+    messages.appendChild(msgDiv);
     chat.scrollTop = chat.scrollHeight;
 };
 
@@ -45,6 +32,18 @@ function sendMessage() {
 
     if (!message.trim()) return;
 
+    // ✅ Show MY message locally on RIGHT
+    let messages = document.getElementById("messages");
+    let chat = document.getElementById("chat");
+
+    let msgDiv = document.createElement("div");
+    msgDiv.className = "message me";
+    msgDiv.textContent = message;
+
+    messages.appendChild(msgDiv);
+    chat.scrollTop = chat.scrollHeight;
+
+    // Send to server for others to receive translated
     socket.send(message);
 
     input.value = "";
