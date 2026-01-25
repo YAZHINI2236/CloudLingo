@@ -43,7 +43,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         System.out.println("From " + session.getId() + ": " + msg);
         System.out.println("Translated: " + translated);
 
-        // ✅ Build JSON message
         String json = """
         {
           "from": "%s",
@@ -56,14 +55,14 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 escape(translated)
         );
 
-        // ✅ BROADCAST TO ALL (INCLUDING SENDER)
         synchronized (sessions) {
             for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
+                if (s.isOpen() && !s.getId().equals(session.getId())) {
                     s.sendMessage(new TextMessage(json));
                 }
             }
         }
+
     }
 
     @Override
@@ -74,7 +73,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         System.out.println("Total users: " + sessions.size());
     }
 
-    // ---------------- HELPERS ----------------
 
     private boolean containsTamil(String text) {
         for (char c : text.toCharArray()) {

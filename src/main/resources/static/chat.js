@@ -1,4 +1,4 @@
-// 🔥 Use current host (works on Render + local)
+
 let protocol = location.protocol === "https:" ? "wss://" : "ws://";
 let socket = new WebSocket(protocol + location.host + "/chat");
 
@@ -14,7 +14,6 @@ socket.onmessage = function(event) {
 
     let msgDiv = document.createElement("div");
 
-    // ALWAYS show translated messages from server on LEFT
     msgDiv.className = "message other";
     msgDiv.textContent = data.translated;
 
@@ -32,7 +31,6 @@ function sendMessage() {
 
     if (!message.trim()) return;
 
-    // ✅ Show MY message locally on RIGHT
     let messages = document.getElementById("messages");
     let chat = document.getElementById("chat");
 
@@ -43,7 +41,6 @@ function sendMessage() {
     messages.appendChild(msgDiv);
     chat.scrollTop = chat.scrollHeight;
 
-    // Send to server for others to receive translated
     socket.send(message);
 
     input.value = "";

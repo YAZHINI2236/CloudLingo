@@ -26,7 +26,6 @@ public class TranslationService {
     private String azureEndpoint;
 
     private final HttpClient httpClient;
-
     // Cache for performance
     private final Map<String, String> cache = new ConcurrentHashMap<>();
 
@@ -60,8 +59,6 @@ public class TranslationService {
         return cleanText;
     }
 
-    // ---------------- AZURE API CALL ----------------
-
     private String callAzureTranslator(String text, String source, String target) throws Exception {
 
         String url = azureEndpoint
@@ -94,8 +91,7 @@ public class TranslationService {
         return extractTranslatedText(response.body());
     }
 
-    // ---------------- HELPERS ----------------
-
+    //HELPERS
     private String extractTranslatedText(String json) {
         String key = "\"text\":\"";
         int start = json.indexOf(key);

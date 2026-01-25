@@ -37,23 +37,20 @@
             margin: 0;
             border-bottom: 1px solid #ddd;
             margin-top: 14px;
-            margin-left: 125px;   /* 🔥 SHIFT RIGHT (adjust this) */
+            margin-left: 125px;
             color: #5b1a14;
             font-size: 55px;
         }
-
         #chat {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
             background: transparent;
             color: #000;
-            position: relative;   /* 🔥 IMPORTANT */
+            position: relative;
         }
-
-        /* Messages always sit at bottom */
         #messages {
-            position: absolute;   /* 🔥 GUARANTEED */
+            position: absolute;
             bottom: 20px;
             left: 20px;
             right: 20px;
@@ -65,13 +62,11 @@
             margin: 8px 0;
         }
 
-        /* Bottom input bar */
         .chat-input-container {
             display: flex;
             align-items: center;
             padding: 15px;
             background: transparent;
-          /*border-top: 1px solid #ddd;*/
         }
 
         #msg {
@@ -83,7 +78,7 @@
             outline: none;
 
         }.message {
-             position: relative;   /* REQUIRED for tails */
+             position: relative;
              max-width: 70%;
              padding: 10px 14px;
              margin: 6px 0;
@@ -95,8 +90,6 @@
                  box-shadow 0.15s ease,
                  filter 0.15s ease;
          }
-
-        /* MY messages → RIGHT */
         .message.me {
             align-self: flex-end;
             background: #471714;
@@ -105,7 +98,6 @@
             border-bottom-right-radius: 4px;
         }
 
-        /* OTHER messages → LEFT */
         .message.other {
             align-self: flex-start;
             background: #f0f0f0;
@@ -113,7 +105,6 @@
             border-bottom-left-radius: 4px;
         }
 
-        /* Tail for ME (RIGHT) */
         .message.me::after {
             content: "";
             position: absolute;
@@ -124,8 +115,6 @@
             border-top: 8px solid transparent;
             border-bottom: 8px solid transparent;
         }
-
-        /* Tail for OTHER (LEFT) */
         .message.other::after {
             content: "";
             position: absolute;
@@ -136,15 +125,13 @@
             border-top: 8px solid transparent;
             border-bottom: 8px solid transparent;
         }
-        /* Hover effect for MY messages */
         .message.me:hover {
-            filter: brightness(1.1);        /* slightly brighter */
-            transform: translateY(-1px);    /* tiny lift */
+            filter: brightness(1.1);
+            transform: translateY(-1px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             cursor: pointer;
         }
 
-        /* Hover effect for OTHER messages */
         .message.other:hover {
             filter: brightness(1.05);
             transform: translateY(-1px);
@@ -188,7 +175,6 @@
     </button>
 
 </div>
-
 <script src="chat.js"></script>
 </body>
 </html>
