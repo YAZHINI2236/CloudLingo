@@ -14,7 +14,7 @@ import java.util.Set;
 @Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
-    private static Set<WebSocketSession> sessions =
+    private static final Set<WebSocketSession> sessions =
             Collections.synchronizedSet(new HashSet<>());
 
     @Autowired
@@ -24,47 +24,46 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) {
         sessions.add(session);
         System.out.println("User connected: " + session.getId());
+        System.out.println("Total users: " + sessions.size());
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
-        // 1️⃣ Get raw message
         String msg = message.getPayload();
 
-        // 2️⃣ Simple rule to decide language direction
-        // (You can improve this later with user preferences)
         boolean isTamil = containsTamil(msg);
 
-        String sourceLang;
-        String targetLang;
+        String sourceLang = isTamil ? "ta" : "en";
+        String targetLang = isTamil ? "en" : "ta";
 
-        if (isTamil) {
-            sourceLang = "ta";
-            targetLang = "en";
-        } else {
-            sourceLang = "en";
-            targetLang = "ta";
-        }
-
-        // 3️⃣ Call optimized TranslationService
         String translated =
                 translationService.translate(msg, sourceLang, targetLang);
 
-        System.out.println("Original: " + msg);
+        System.out.println("From " + session.getId() + ": " + msg);
         System.out.println("Translated: " + translated);
 
-        // 4️⃣ Send translated message to all OTHER users
-        for (WebSocketSession s : sessions) {
-            if (s.isOpen()) {
-                if (!s.getId().equals(session.getId())) {
-                    s.sendMessage(new TextMessage(translated));
+        // ✅ Build JSON message
+        String json = """
+        {
+          "from": "%s",
+          "original": "%s",
+          "translated": "%s"
+        }
+        """.formatted(
+                session.getId(),
+                escape(msg),
+                escape(translated)
+        );
+
+        // ✅ BROADCAST TO ALL (INCLUDING SENDER)
+        synchronized (sessions) {
+            for (WebSocketSession s : sessions) {
+                if (s.isOpen()) {
+                    s.sendMessage(new TextMessage(json));
                 }
             }
         }
-
-        // 5️⃣ (Optional) Send original back to sender (or skip)
-        // session.sendMessage(new TextMessage(msg));
     }
 
     @Override
@@ -72,11 +71,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                                       org.springframework.web.socket.CloseStatus status) {
         sessions.remove(session);
         System.out.println("User disconnected: " + session.getId());
+        System.out.println("Total users: " + sessions.size());
     }
 
-    // ---------------- HELPER ----------------
+    // ---------------- HELPERS ----------------
 
-    // Simple Tamil Unicode check
     private boolean containsTamil(String text) {
         for (char c : text.toCharArray()) {
             if (c >= 0x0B80 && c <= 0x0BFF) {
@@ -84,5 +83,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             }
         }
         return false;
+    }
+
+    private String escape(String text) {
+        if (text == null) return "";
+        return text.replace("\\", "\\\\")
+                .replace("\"", "\\\"");
     }
 }

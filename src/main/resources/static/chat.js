@@ -1,18 +1,42 @@
-let socket = new WebSocket("ws://localhost:8080/chat");
+// 🔥 Use current host (works on Render + local)
+let protocol = location.protocol === "https:" ? "wss://" : "ws://";
+let socket = new WebSocket(protocol + location.host + "/chat");
+
+socket.onopen = () => {
+    console.log("WebSocket connected");
+};
 
 socket.onmessage = function(event) {
     let chat = document.getElementById("chat");
     let messages = document.getElementById("messages");
-    let decoded = decodeURIComponent(event.data);
 
-    let msgDiv = document.createElement("div");
-    msgDiv.className = "message other";   // LEFT
-    msgDiv.textContent = decoded;
+    console.log("Raw message:", event.data);
 
-    messages.appendChild(msgDiv);
+    let data;
+    try {
+        data = JSON.parse(event.data);
+    } catch (e) {
+        console.error("Invalid JSON:", event.data);
+        return;
+    }
 
-    // Always scroll to bottom
+    // LEFT: original
+    let originalDiv = document.createElement("div");
+    originalDiv.className = "message other";
+    originalDiv.textContent = data.original;
+    messages.appendChild(originalDiv);
+
+    // RIGHT: translated
+    let translatedDiv = document.createElement("div");
+    translatedDiv.className = "message me";
+    translatedDiv.textContent = data.translated;
+    messages.appendChild(translatedDiv);
+
     chat.scrollTop = chat.scrollHeight;
+};
+
+socket.onerror = (e) => {
+    console.error("WebSocket error", e);
 };
 
 function sendMessage() {
@@ -22,17 +46,6 @@ function sendMessage() {
     if (!message.trim()) return;
 
     socket.send(message);
-
-    let chat = document.getElementById("chat");
-    let messages = document.getElementById("messages");
-
-    let msgDiv = document.createElement("div");
-    msgDiv.className = "message me";   // RIGHT
-    msgDiv.textContent = message;
-
-    messages.appendChild(msgDiv);
-
-    chat.scrollTop = chat.scrollHeight;
 
     input.value = "";
 }
