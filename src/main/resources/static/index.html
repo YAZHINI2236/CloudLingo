@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CloudLingo</title>
+    <style>
+        @font-face {
+            font-family: 'RocaTwo';
+            src: url('fonts/fonnts.com-Roca_Two_Thin.ttf') format('truetype');
+            font-weight: 300;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'RocaTwo';
+            src: url('fonts/fonnts.com-Roca_Two_Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'RocaTwo', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url("bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+
+
+        }
+        h2 {
+            padding: 15px 20px;
+            margin: 0;
+            border-bottom: 1px solid #ddd;
+            margin-top: 14px;
+            margin-left: 125px;   /* 🔥 SHIFT RIGHT (adjust this) */
+            color: #5b1a14;
+            font-size: 55px;
+        }
+
+        #chat {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: transparent;
+            color: #000;
+            position: relative;   /* 🔥 IMPORTANT */
+        }
+
+        /* Messages always sit at bottom */
+        #messages {
+            position: absolute;   /* 🔥 GUARANTEED */
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+
+            display: flex;
+            flex-direction: column;
+        }
+        #chat p {
+            margin: 8px 0;
+        }
+
+        /* Bottom input bar */
+        .chat-input-container {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: transparent;
+          /*border-top: 1px solid #ddd;*/
+        }
+
+        #msg {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 30px;
+            border: 2px solid #000;
+            font-size: 16px;
+            outline: none;
+
+        }.message {
+             position: relative;   /* REQUIRED for tails */
+             max-width: 70%;
+             padding: 10px 14px;
+             margin: 6px 0;
+             border-radius: 16px;
+             font-size: 14px;
+             line-height: 1.4;
+             transition:
+                 transform 0.15s ease,
+                 box-shadow 0.15s ease,
+                 filter 0.15s ease;
+         }
+
+        /* MY messages → RIGHT */
+        .message.me {
+            align-self: flex-end;
+            background: #471714;
+            color: #dddddd;
+            text-align: right;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* OTHER messages → LEFT */
+        .message.other {
+            align-self: flex-start;
+            background: #f0f0f0;
+            text-align: left;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Tail for ME (RIGHT) */
+        .message.me::after {
+            content: "";
+            position: absolute;
+            right: -8px;
+            bottom: 10px;
+
+            border-left: 8px solid #471714;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        /* Tail for OTHER (LEFT) */
+        .message.other::after {
+            content: "";
+            position: absolute;
+            left: -8px;
+            bottom: 10px;
+
+            border-right: 8px solid #f0f0f0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+        /* Hover effect for MY messages */
+        .message.me:hover {
+            filter: brightness(1.1);        /* slightly brighter */
+            transform: translateY(-1px);    /* tiny lift */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            cursor: pointer;
+        }
+
+        /* Hover effect for OTHER messages */
+        .message.other:hover {
+            filter: brightness(1.05);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            cursor: pointer;
+        }
+        #sendBtn {
+            margin-left: 15px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 2px solid #000;
+            background: #5b1a14;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        #sendBtn:hover {
+            transform: scale(1.05);
+            background: #5b1a14;
+        }
+        #sendBtn:hover svg {
+            stroke: #ffffff;
+        }
+
+    </style>
+</head>
+<body>
+
+<h2>CloudLingo</h2>
+
+<div id="chat">
+    <div id="messages"></div>
+</div>
+<div class="chat-input-container">
+    <input id="msg" placeholder="Type a message..." />
+    <button id="sendBtn" onclick="sendMessage()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+    </button>
+
+</div>
+
+<script src="chat.js"></script>
+</body>
+</html>
