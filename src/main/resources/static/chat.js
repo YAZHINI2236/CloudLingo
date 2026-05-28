@@ -24,7 +24,6 @@ socket.onmessage = function(event) {
 socket.onerror = (e) => {
     console.error("WebSocket error", e);
 };
-
 function sendMessage() {
     let input = document.getElementById("msg");
     let message = input.value;
@@ -45,3 +44,10 @@ function sendMessage() {
 
     input.value = "";
 }
+
+document.getElementById("msg").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+    }
+});
